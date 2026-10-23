@@ -1,0 +1,52 @@
+-- ═══ LIGHTHUB FAST LOADER (OPTIMIZED & NO LAG) ═══
+local CoreGui = game:GetService("CoreGui")
+local Players = game:GetService("Players")
+local LP = Players.LocalPlayer
+local PlayerGui = LP:WaitForChild("PlayerGui")
+
+-- Helper Function para magpalit ng Text
+local function patchText(inst)
+    if inst:IsA("TextLabel") or inst:IsA("TextButton") or inst:IsA("TextBox") then
+        local txt = inst.Text
+        if txt:find("Pulse") or txt:find("PULSE") then
+            txt = string.gsub(txt, "PULSE HUB", "LIGHTHUB")
+            txt = string.gsub(txt, "Pulse Hub", "LightHub")
+            txt = string.gsub(txt, "PulseHub", "LightHub")
+            txt = string.gsub(txt, "PULSE", "LIGHTHUB")
+            txt = string.gsub(txt, "Pulse", "LightHub")
+            inst.Text = txt
+        end
+    end
+end
+
+-- 1. Tanggalin agad ang Loading Screen nang walang lag
+task.spawn(function()
+    for _, gui in ipairs({CoreGui, PlayerGui}) do
+        for _, v in ipairs(gui:GetDescendants()) do
+            if v:IsA("Frame") or v:IsA("ScreenGui") or v:IsA("ImageLabel") then
+                local name = v.Name:lower()
+                if name:find("load") or name:find("intro") or name:find("splash") or name:find("moon") then
+                    v:Destroy()
+                end
+            end
+            patchText(v)
+        end
+    end
+end)
+
+-- 2. Fast Event Listener (Awtomatikong papalitan ang text sa sandaling gumawa ng bagong UI element)
+CoreGui.DescendantAdded:Connect(function(v)
+    if v:IsA("Frame") or v:IsA("ScreenGui") or v:IsA("ImageLabel") then
+        local name = v.Name:lower()
+        if name:find("load") or name:find("intro") or name:find("splash") or name:find("moon") then
+            v:Destroy()
+            return
+        end
+    end
+    patchText(v)
+end)
+
+PlayerGui.DescendantAdded:Connect(patchText)
+
+-- 3. INSTANT EXECUTION NG MAIN SCRIPT
+loadstring(game:HttpGet("https://raw.githubusercontent.com/PulseZax/Loader/main/.lua"))()
